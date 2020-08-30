@@ -1,3 +1,7 @@
+# My Changes to the default example of Speech recognition app from Apple
+- Added the ability to playback sound files through the speaker
+- Disabling speech recognition during sound playback
+
 # Recognizing Speech in Live Audio
 
 Perform speech recognition on audio coming from the microphone of an iOS device.

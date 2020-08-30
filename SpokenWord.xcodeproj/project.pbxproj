@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		147E610024FB81F500AD2945 /* f8e0a23a3d99d36f32fd7c0d33709b66.wav in Resources */ = {isa = PBXBuildFile; fileRef = 147E60FF24FB81F500AD2945 /* f8e0a23a3d99d36f32fd7c0d33709b66.wav */; };
 		736165992176725C0062D377 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 736165982176725C0062D377 /* README.md */; };
 		738998B621515C9900E378D8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 738998B521515C9900E378D8 /* AppDelegate.swift */; };
 		738998B821515C9900E378D8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 738998B721515C9900E378D8 /* ViewController.swift */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		147E60FF24FB81F500AD2945 /* f8e0a23a3d99d36f32fd7c0d33709b66.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = f8e0a23a3d99d36f32fd7c0d33709b66.wav; sourceTree = "<group>"; };
 		736165982176725C0062D377 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		738998B221515C9900E378D8 /* SpokenWord.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpokenWord.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		738998B521515C9900E378D8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -24,8 +26,8 @@
 		738998BC21515C9A00E378D8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		738998BF21515C9A00E378D8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		738998C121515C9A00E378D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A1D3C360A1D3B6F000000001 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE.txt; sourceTree = "<group>"; };
-		A1D45270A1D47E7000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
+		A1D3C360A1D3B6F000000001 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		A1D45270A1D47E7000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,6 +41,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		147E60FE24FB81E200AD2945 /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				147E60FF24FB81F500AD2945 /* f8e0a23a3d99d36f32fd7c0d33709b66.wav */,
+			);
+			path = Sounds;
+			sourceTree = "<group>";
+		};
 		738998A921515C9900E378D8 = {
 			isa = PBXGroup;
 			children = (
@@ -61,6 +71,7 @@
 		738998B421515C9900E378D8 /* SpokenWord */ = {
 			isa = PBXGroup;
 			children = (
+				147E60FE24FB81E200AD2945 /* Sounds */,
 				738998B521515C9900E378D8 /* AppDelegate.swift */,
 				738998B721515C9900E378D8 /* ViewController.swift */,
 				738998B921515C9900E378D8 /* Main.storyboard */,
@@ -76,7 +87,6 @@
 			children = (
 				A1D3C360A1D3B6F000000001 /* LICENSE.txt */,
 			);
-			name = LICENSE;
 			path = LICENSE;
 			sourceTree = "<group>";
 		};
@@ -98,7 +108,6 @@
 				738998AE21515C9900E378D8 /* Sources */,
 				738998AF21515C9900E378D8 /* Frameworks */,
 				738998B021515C9900E378D8 /* Resources */,
-				9160B8209160B4D000000001,
 			);
 			buildRules = (
 			);
@@ -151,6 +160,7 @@
 				738998C021515C9A00E378D8 /* LaunchScreen.storyboard in Resources */,
 				738998BD21515C9A00E378D8 /* Assets.xcassets in Resources */,
 				736165992176725C0062D377 /* README.md in Resources */,
+				147E610024FB81F500AD2945 /* f8e0a23a3d99d36f32fd7c0d33709b66.wav in Resources */,
 				738998BB21515C9900E378D8 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -313,7 +323,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 5EPGSFYMCH;
 				INFOPLIST_FILE = SpokenWord/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -333,7 +343,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 5EPGSFYMCH;
 				INFOPLIST_FILE = SpokenWord/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

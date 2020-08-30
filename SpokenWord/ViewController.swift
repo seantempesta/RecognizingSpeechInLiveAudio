@@ -1,12 +1,13 @@
 /*
-See LICENSE folder for this sample’s licensing information.
-
-Abstract:
-The root view controller that provides a button to start and stop recording, and which displays the speech recognition results.
-*/
+ See LICENSE folder for this sample’s licensing information.
+ 
+ Abstract:
+ The root view controller that provides a button to start and stop recording, and which displays the speech recognition results.
+ */
 
 import UIKit
 import Speech
+import AVFoundation
 
 public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     // MARK: Properties
@@ -17,7 +18,13 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     
     private var recognitionTask: SFSpeechRecognitionTask?
     
+    private let audioSession = AVAudioSession.sharedInstance()
+    
     private let audioEngine = AVAudioEngine()
+    
+    private let player = AVAudioPlayerNode()
+    
+    private var speechBuffer: AVAudioPCMBuffer?
     
     @IBOutlet var textView: UITextView!
     
@@ -40,7 +47,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         
         // Asynchronously make the authorization request.
         SFSpeechRecognizer.requestAuthorization { authStatus in
-
+            
             // Divert to the app's main thread so that the UI
             // can be updated.
             OperationQueue.main.addOperation {
@@ -65,6 +72,39 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 }
             }
         }
+        
+    }
+    
+    private func getBuffer(fileURL: URL) -> AVAudioPCMBuffer? {
+        let file: AVAudioFile!
+        do {
+            try file = AVAudioFile(forReading: fileURL)
+        } catch {
+            print("Could not load file: \(error)")
+            return nil
+        }
+        file.framePosition = 0
+        let bufferCapacity = AVAudioFrameCount(file.length)
+            + AVAudioFrameCount(file.processingFormat.sampleRate * 0.1) // add 100ms to capacity
+        guard let buffer = AVAudioPCMBuffer(pcmFormat: file.processingFormat,
+                                            frameCapacity: bufferCapacity) else { return nil }
+        do {
+            try file.read(into: buffer)
+        } catch {
+            print("Could not load file into buffer: \(error)")
+            return nil
+        }
+        file.framePosition = 0
+        return buffer
+    }
+    
+    // Start listening to the mic sending the data to the voice recognition service
+    private func installTap() {
+        let recordingFormat = audioEngine.inputNode.outputFormat(forBus: 0)
+        audioEngine.inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
+            self.recognitionRequest?.append(buffer)
+            
+        }
     }
     
     private func startRecording() throws {
@@ -73,12 +113,31 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         recognitionTask?.cancel()
         self.recognitionTask = nil
         
-        // Configure the audio session for the app.
-        let audioSession = AVAudioSession.sharedInstance()
-        try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
-        try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+        // Input and Output audio run through the audioengine with an optional mixer for playback
+        let mainMixer = audioEngine.mainMixerNode
         let inputNode = audioEngine.inputNode
-
+        let outputNode = audioEngine.outputNode
+        
+        // Configure the audio session for playback
+        do {
+            // Setup duplex playback and recording and switch the default audio output to the loud speaker
+            try audioSession.setCategory(.playAndRecord, mode: .default, options: .defaultToSpeaker)
+            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+            
+            // Load up the sample wav file
+            let sourceFileURL = Bundle.main.url(forResource: "f8e0a23a3d99d36f32fd7c0d33709b66", withExtension: "wav")!
+            let sourceFile = try AVAudioFile(forReading: sourceFileURL)
+            let format = sourceFile.processingFormat
+            speechBuffer = getBuffer(fileURL: sourceFileURL)
+            
+            // Link up the audio player to first play through the mixer and then the speaker
+            audioEngine.attach(player)
+            audioEngine.connect(player, to:mainMixer, format: format)
+            audioEngine.connect(mainMixer, to: outputNode, format: format)
+        } catch {
+            print(error)
+        }
+        
         // Create and configure the speech recognition request.
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
         guard let recognitionRequest = recognitionRequest else { fatalError("Unable to create a SFSpeechAudioBufferRecognitionRequest object") }
@@ -105,20 +164,17 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 // Stop recognizing speech if there is a problem.
                 self.audioEngine.stop()
                 inputNode.removeTap(onBus: 0)
-
+                
                 self.recognitionRequest = nil
                 self.recognitionTask = nil
-
+                
                 self.recordButton.isEnabled = true
                 self.recordButton.setTitle("Start Recording", for: [])
             }
         }
-
+        
         // Configure the microphone input.
-        let recordingFormat = inputNode.outputFormat(forBus: 0)
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
-            self.recognitionRequest?.append(buffer)
-        }
+        installTap()
         
         audioEngine.prepare()
         try audioEngine.start()
@@ -154,6 +210,25 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             } catch {
                 recordButton.setTitle("Recording Not Available", for: [])
             }
+        }
+    }
+    
+    @IBAction func playAudio(_ sender: UIButton) {
+        print("Pressed play")
+        print(player)
+        if let speechBuffer = speechBuffer  {
+            // First stop the mic from listening so the playback doesn't get recognized
+            print("Removing tap during playback")
+            audioEngine.inputNode.removeTap(onBus: 0)
+            
+            // Play the audio
+            player.scheduleBuffer(speechBuffer, at:nil, completionHandler: {
+                print("Re-installing Tap")
+                self.installTap() // After done playing, re-enable the mic
+            })
+            player.play()
+        } else {
+            print("Start recording first to initialize the sound system")
         }
     }
 }
